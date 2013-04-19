@@ -1,0 +1,40 @@
+From: apregier <aregier@genome.wustl.edu>
+Date: Mon, 8 Apr 2013 16:54:51 -0500
+Subject: [PATCH] Don't require a key to avoid phoning home
+
+---
+ .../src/org/broadinstitute/sting/gatk/CommandLineExecutable.java    | 6 +++---
+ .../broadinstitute/sting/gatk/arguments/GATKArgumentCollection.java | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/public/java/src/org/broadinstitute/sting/gatk/CommandLineExecutable.java b/public/java/src/org/broadinstitute/sting/gatk/CommandLineExecutable.java
+index 111786e..126b0cb 100644
+--- a/public/java/src/org/broadinstitute/sting/gatk/CommandLineExecutable.java
++++ b/public/java/src/org/broadinstitute/sting/gatk/CommandLineExecutable.java
+@@ -129,9 +129,9 @@ public abstract class CommandLineExecutable extends CommandLineProgram {
+         if ( getArgumentCollection().phoneHomeType == GATKRunReport.PhoneHomeOption.NO_ET ||
+              getArgumentCollection().phoneHomeType == GATKRunReport.PhoneHomeOption.STDOUT ) {
+             if ( getArgumentCollection().gatkKeyFile == null ) {
+-                throw new UserException("Running with the -et NO_ET or -et STDOUT option requires a GATK Key file. " +
+-                                        "Please see " + UserException.PHONE_HOME_DOCS_URL +
+-                                        " for more information and instructions on how to obtain a key.");
++                //throw new UserException("Running with the -et NO_ET or -et STDOUT option requires a GATK Key file. " +
++                //                        "Please see " + UserException.PHONE_HOME_DOCS_URL +
++                //                        " for more information and instructions on how to obtain a key.");
+             }
+             else {
+                 PublicKey gatkPublicKey = CryptUtils.loadGATKDistributedPublicKey();
+diff --git a/public/java/src/org/broadinstitute/sting/gatk/arguments/GATKArgumentCollection.java b/public/java/src/org/broadinstitute/sting/gatk/arguments/GATKArgumentCollection.java
+index a3e19b9..429e2ec 100644
+--- a/public/java/src/org/broadinstitute/sting/gatk/arguments/GATKArgumentCollection.java
++++ b/public/java/src/org/broadinstitute/sting/gatk/arguments/GATKArgumentCollection.java
+@@ -70,7 +70,7 @@ public class GATKArgumentCollection {
+     // --------------------------------------------------------------------------------------------------------------
+ 
+     @Argument(fullName = "phone_home", shortName = "et", doc="What kind of GATK run report should we generate? STANDARD is the default, can be NO_ET so nothing is posted to the run repository. Please see " + UserException.PHONE_HOME_DOCS_URL + " for details.", required = false)
+-    public GATKRunReport.PhoneHomeOption phoneHomeType = GATKRunReport.PhoneHomeOption.STANDARD;
++    public GATKRunReport.PhoneHomeOption phoneHomeType = GATKRunReport.PhoneHomeOption.NO_ET;
+ 
+     @Argument(fullName = "gatk_key", shortName = "K", doc="GATK Key file. Required if running with -et NO_ET. Please see " + UserException.PHONE_HOME_DOCS_URL + " for details.", required = false)
+     public File gatkKeyFile = null;
+-- 
