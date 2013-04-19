@@ -7,5 +7,5 @@ Homepage: http://www.broadinstitute.org/software/allpaths-lg/blog/
 
 Package: libgatk-protected-java
 Architecture: amd64
-Depends:
-Description: The GATK provides analysis tools.  Note: this package cannot be distributed outside TGI 
+Depends: default-jre
+Description: The GATK provides analysis tools.  Note: this package cannot be distributed outside TGI. 
