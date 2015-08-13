@@ -22,6 +22,15 @@
   ~ OTHER DEALINGS IN THE SOFTWARE.
   -->
 
+<?php
+
+    include '../../../common/include/common.php';
+    $module = modules::GATK;
+    printHeader($module, "GATK | Tool Documentation Index", "Guides");
+?>
+
+<div class='row-fluid' id="top">
+
 <#include "common.html"/>
 
 <#macro argumentlist name myargs>
@@ -31,45 +40,70 @@
         </tr>
         <#list myargs as arg>
             <tr>
-                <td><a href="#${arg.name}">${arg.name}</a></td>
-                <td>${arg.type}</td>
+                <td><a href="#${arg.name}">${arg.name}</a><br />
+                	<#if arg.synonyms != "NA">
+                		<#if arg.name[2..] != arg.synonyms[1..]>
+                			&nbsp;<em>${arg.synonyms}</em>
+                		</#if>
+                	</#if>
+                </td>
+                <!--<td>${arg.type}</td> -->
                 <td>${arg.defaultValue!"NA"}</td>
                 <td>${arg.summary}</td>
             </tr>
-            <#--
-            <
-            td>${arg.required}</td>
-            -->
         </#list>
     </#if>
 </#macro>
 
 <#macro argumentDetails arg>
-    <h3><a name="${arg.name}">${arg.name}
-        <#if arg.synonyms??> / ${arg.synonyms}</#if>
-    </a>
-        (
-        <#if arg.attributes??>${arg.attributes}</#if>
-        ${arg.type}
-        <#if arg.defaultValue??> with default value ${arg.defaultValue}</#if>
-        )
-    </h3>
-    <p class="args">
-        ${arg.summary}. ${arg.fulltext}
-        <#if arg.rodTypes??>${arg.name} binds reference ordered data. This argument supports ROD files of the
-            following types: ${arg.rodTypes}
-        </#if>
-        <#if arg.options??>
-            <br>
-            The ${arg.name} argument is an enumerated type (${arg.type}), which can have one of the following values:
-            <dl class="enum">
-                <#list arg.options as option>
-                    <dt class="enum">${option.name}</dt>
-                    <dd class="enum">${option.summary}</dd>
-                </#list>
-            </dl>
-        </#if>
-    </p>
+	<hr style="border-bottom: dotted 1px #C0C0C0;" />
+	<h3><a name="${arg.name}">${arg.name} </a>
+		<#if arg.synonyms??> / <small>${arg.synonyms}</small></#if>
+	</h3>
+	<p class="args">
+		<b>${arg.summary}</b><br />
+		${arg.fulltext}
+	</p>
+	<!-- Not sure what this can contain apart from "required" and "deprecated" (which args are @hidden) so removing it provisionally -->
+	<!--<#if arg.attributes??>
+		<p>${arg.attributes}</p> 
+	</#if>-->
+	<#if arg.rodTypes != "NA">
+		<p>${arg.name} binds reference ordered data. This argument supports ROD files of the following types: ${arg.rodTypes}</p>
+	</#if>
+	<#if arg.options?has_content>
+		<p>
+		The ${arg.name} argument is an enumerated type (${arg.type}), which can have one of the following values:
+		<dl class="enum">
+			<#list arg.options as option>
+				<dt class="enum">${option.name}</dt>
+				<dd class="enum">${option.summary}</dd>
+			</#list>
+		</dl>
+		</p>
+	</#if>
+	<p><#if arg.required != "NA">
+			<#if arg.required == "yes">
+				<span class="badge badge-important">R</span>
+			</#if>
+		</#if>
+		<span class="label label-info ">${arg.type}</span> 
+		<#if arg.defaultValue?is_number>
+			&nbsp;<span class="label">${arg.defaultValue}</span>
+		</#if>
+		<#if arg.minValue?is_number>
+			&nbsp;<span class="label label-warning">[ [ ${arg.minValue}</span>
+		</#if>
+		<#if arg.minRecValue?is_number>
+			&nbsp;<span class="label label-success">[ ${arg.minRecValue}</span>
+		</#if>
+		<#if arg.maxRecValue?is_number>
+			&nbsp;<span class="label label-success">${arg.maxRecValue} ]</span>
+		</#if>
+		<#if arg.maxValue?is_number>
+			&nbsp;<span class="label label-warning">${arg.maxValue} ] ]</span>
+		</#if>
+	</p>
 </#macro>
 <#macro relatedByType name type>
     <#list relatedDocs as relatedDoc>
@@ -88,8 +122,11 @@
 </#macro>
 
 <?php $group = '${group}'; ?>
-<@makeHeader title="${name} documentation" isIndex=false />
+
 <section class="span4">
+    <aside class="well">
+        <a href="index"><h4><i class='fa fa-chevron-left'></i> Back to Tool Docs Index</h4></a>
+    </aside>
     <aside class="well">
         <h2>Categories</h2>
         <@getCategories groups=groups />
@@ -103,11 +140,12 @@
     <h1>${name}</h1>
 
     <p class="lead">${summary}</p>
+    <#-- using goto dev annotation instead, see above footer
     <#if author??>
         <h3>Author
             <small> ${author}</small>
         </h3>
-    </#if>
+    </#if> -->
     <#if group?? >
         <h3>Category
             <small> ${group}</small>
@@ -123,14 +161,28 @@
 			<small>${partitiontype}</small>
 		</h3>
 	</#if>
+	<#if annotfield != "" >
+		<h3>VCF Field
+			<small>${annotfield}</small>
+		</h3>
+	</#if>
 	<#if annotinfo != "" >
-		<h3>Annotation type
+		<h3>Type
 			<small>${annotinfo}</small>
 		</h3>
 	</#if>
+    <#if annotdescript?has_content >
+        <h3>Header definition line <br />
+            <small>
+                <#list annotdescript as line>
+                <li><pre>${line}</pre></li>
+            </#list>
+            </small>
+        </h3>
+    </#if>
 
 	<hr>
-    <h2>Introduction</h2>
+    <h2>Overview</h2>
     ${description}
     
 	<#-- Create references to additional capabilities if appropriate -->
@@ -169,11 +221,16 @@
 		</#if>
 		<#if downsampling?size != 0>
 			<h3>Downsampling settings</h3>
-			<p>This tool overrides the engine's default downsampling settings.</p>
-			<ul>
-				<li>Mode: <b>${downsampling.by}</b></li>
-				<li>To coverage: <b>${downsampling.to_cov}</b></li>
-			</ul>
+			<#if downsampling.by == "NONE">
+				<p>This tool does not apply any downsampling by default.</p>
+			</#if>
+			<#if downsampling.by != "NONE">
+				<p>This tool applies the following downsampling settings by default.</p>
+				<ul>
+					<li>Mode: <b>${downsampling.by}</b></li>
+					<li>To coverage: <b>${downsampling.to_cov}</b></li>
+				</ul>
+			</#if>
 		</#if>
 		<#if refwindow?size != 0>
 			<h3>Window size</h3>
@@ -198,10 +255,11 @@
 			<p></p>
 		</#if>
 		<#if extradocs?size != 0>
-			<h3>Inherited arguments</h3>
-			<p>The arguments described in the entries below can be supplied to this tool to modify
-			its behavior. For example, the -L argument directs the GATK engine restricts processing
-			to specific genomic intervals (this is an Engine capability and is therefore available to all GATK walkers).</p>
+			<h3>Engine arguments</h3>
+			<p>All tools inherit arguments from the GATK Engine' "CommandLineGATK" argument collection, which can be
+				used to modify various aspects of the tool's function. For example, the -L argument directs the GATK
+				engine to restrict processing to specific genomic intervals; or the -rf argument allows you to apply
+				certain read filters to exclude some of the data from the analysis.</p>
 			<ul>
 				<#list extradocs as extradoc>
 					<li><a href="${extradoc.filename}">${extradoc.name}</a></li>
@@ -219,22 +277,31 @@
 		<#-- Create the argument summary -->
 			<#if arguments.all?size != 0>
 				<h3>${name} specific arguments</h3>
-				<p>This table summarizes the command-line arguments that are specific to this tool. For details, see the list further down below the table.</p>
+				<p>This table summarizes the command-line arguments that are specific to this tool. For more details on each argument, see the list further down below the table or click on an argument name to jump directly to that entry in the list.</p>
 				<table class="table table-striped table-bordered table-condensed">
 					<thead>
 					<tr>
-						<th>Name</th>
-						<th>Type</th>
+						<th>Argument name(s)</th>
+						<!--<th>Short name</th> -->
 						<th>Default value</th>
 						<th>Summary</th>
 					</tr>
 					</thead>
 					<tbody>
-					<@argumentlist name="Required" myargs=arguments.required/>
-					<@argumentlist name="Optional" myargs=arguments.optional/>
-					<@argumentlist name="Advanced" myargs=arguments.advanced/>
+					<@argumentlist name="Required Inputs" myargs=arguments.required_in/>
+					<@argumentlist name="Required Outputs" myargs=arguments.required_out/>
+					<@argumentlist name="Required Parameters" myargs=arguments.required_param/>
+					<@argumentlist name="Required Flags" myargs=arguments.required_flag/>
+					<@argumentlist name="Optional Inputs" myargs=arguments.optional_in/>
+					<@argumentlist name="Optional Outputs" myargs=arguments.optional_out/>
+					<@argumentlist name="Optional Parameters" myargs=arguments.optional_param/>
+					<@argumentlist name="Optional Flags" myargs=arguments.optional_flag/>
+					<@argumentlist name="Advanced Inputs" myargs=arguments.advanced_in/>
+					<@argumentlist name="Advanced Outputs" myargs=arguments.advanced_out/>
+					<@argumentlist name="Advanced Parameters" myargs=arguments.advanced_param/>
+					<@argumentlist name="Advanced Flags" myargs=arguments.advanced_flag/>
 					<@argumentlist name="Hidden" myargs=arguments.hidden/>
-					<@argumentlist name="Depreciated" myargs=arguments.depreciated/>
+					<@argumentlist name="Deprecated" myargs=arguments.deprecated/>
 					</tbody>
 				</table>
 			</#if>
@@ -248,6 +315,14 @@
 							<@argumentDetails arg=arg/>
 						</#list>
 				</#if>
-
+		
 			<@footerInfo />
-			<@pageFooter />
+		<#-- Specify go-to developer (for internal use) -->
+			<#if gotoDev??>
+				<small>GTD: ${gotoDev}</small>
+			</#if>
+			<@footerClose />
+
+</div>
+
+<?php printFooter($module); ?>

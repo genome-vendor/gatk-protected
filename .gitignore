@@ -1,7 +1,6 @@
 /*.bam
 /*.bai
 /*.bed
-*.idx
 *~
 /*.vcf
 /*.txt
@@ -25,3 +24,6 @@ dump/
 lib/
 out/
 /atlassian-ide-plugin.xml
+maven-metadata-local.xml
+dependency-reduced-pom.xml
+public/external-example/target/
