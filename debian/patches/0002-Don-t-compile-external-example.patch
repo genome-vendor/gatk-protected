@@ -1,0 +1,20 @@
+Date: Mon, 17 Aug 2015 14:37:25 -0500
+Subject: [PATCH] Don't compile external example
+
+---
+ .../public/pom.xml | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/public/pom.xml b/public/pom.xml
+index f4cea4f..a917ab2 100644
+--- a/public/pom.xml
++++ b/public/pom.xml
+@@ -19,7 +19,6 @@
+         <module>gatk-utils</module>
+         <module>gatk-engine</module>
+         <module>gatk-tools-public</module>
+-        <module>external-example</module>
+         <!-- queue optionally enabled as profiles -->
+     </modules>
+ 
+-- 

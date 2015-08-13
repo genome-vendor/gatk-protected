@@ -6,4 +6,4 @@ PKG=$(shell dh_listpackages)
 	dh $@ --with javahelper
 
 override_dh_auto_build:
-	dh_auto_build -- package.gatk.full
+	mvn package '-P!private,!queue'

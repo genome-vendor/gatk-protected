@@ -1,11 +1,11 @@
-Source: libgatk-protected-java
+Source: libgatk-protected3.4-java
 Section: non-free/science
 Priority: optional
-Build-Depends: debhelper (>= 7),ant1.8,ivy,javahelper (>= 0.33),libbcel-java,libarchive-zip-perl (>=1.30-5),openjdk-6-jdk,git-buildpackage
+Build-Depends: debhelper (>= 7),ant1.7,maven (>= 3.0.4),javahelper (>= 0.33),libbcel-java,libarchive-zip-perl (>=1.30-5),openjdk-7-jdk,git-buildpackage
 Maintainer: The Genome Institute <gmt@genome.wustl.edu>
 Homepage: http://www.broadinstitute.org/software/allpaths-lg/blog/
 
-Package: libgatk-protected-java
+Package: libgatk-protected3.4-java
 Architecture: amd64
 Depends: default-jre
 Description: The GATK provides analysis tools.  Note: this package cannot be distributed outside TGI. 

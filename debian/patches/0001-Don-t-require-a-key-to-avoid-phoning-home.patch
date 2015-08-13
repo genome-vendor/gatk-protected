@@ -9,9 +9,9 @@ Subject: [PATCH] Don't require a key to avoid phoning home
 
 diff --git a/public/java/src/org/broadinstitute/sting/gatk/CommandLineExecutable.java b/public/java/src/org/broadinstitute/sting/gatk/CommandLineExecutable.java
 index 111786e..126b0cb 100644
---- a/public/java/src/org/broadinstitute/sting/gatk/CommandLineExecutable.java
-+++ b/public/java/src/org/broadinstitute/sting/gatk/CommandLineExecutable.java
-@@ -129,9 +129,9 @@ public abstract class CommandLineExecutable extends CommandLineProgram {
+--- a/public/gatk-engine/src/main/java/org/broadinstitute/gatk/engine/CommandLineExecutable.java
++++ b/public/gatk-engine/src/main/java/org/broadinstitute/gatk/engine/CommandLineExecutable.java
+@@ -137,9 +137,9 @@ public abstract class CommandLineExecutable extends CommandLineProgram {
          if ( getArgumentCollection().phoneHomeType == GATKRunReport.PhoneHomeOption.NO_ET ||
               getArgumentCollection().phoneHomeType == GATKRunReport.PhoneHomeOption.STDOUT ) {
              if ( getArgumentCollection().gatkKeyFile == null ) {
@@ -26,15 +26,17 @@ index 111786e..126b0cb 100644
                  PublicKey gatkPublicKey = CryptUtils.loadGATKDistributedPublicKey();
 diff --git a/public/java/src/org/broadinstitute/sting/gatk/arguments/GATKArgumentCollection.java b/public/java/src/org/broadinstitute/sting/gatk/arguments/GATKArgumentCollection.java
 index a3e19b9..429e2ec 100644
---- a/public/java/src/org/broadinstitute/sting/gatk/arguments/GATKArgumentCollection.java
-+++ b/public/java/src/org/broadinstitute/sting/gatk/arguments/GATKArgumentCollection.java
-@@ -70,7 +70,7 @@ public class GATKArgumentCollection {
-     // --------------------------------------------------------------------------------------------------------------
- 
-     @Argument(fullName = "phone_home", shortName = "et", doc="What kind of GATK run report should we generate? STANDARD is the default, can be NO_ET so nothing is posted to the run repository. Please see " + UserException.PHONE_HOME_DOCS_URL + " for details.", required = false)
--    public GATKRunReport.PhoneHomeOption phoneHomeType = GATKRunReport.PhoneHomeOption.STANDARD;
+--- a/public/gatk-engine/src/main/java/org/broadinstitute/gatk/engine/arguments/GATKArgumentCollection.java
++++ b/public/gatk-engine/src/main/java/org/broadinstitute/gatk/engine/arguments/GATKArgumentCollection.java
+@@ -88,9 +88,9 @@ public class GATKArgumentCollection {
+      */
+     @Argument(fullName = "phone_home", shortName = "et", doc="Run reporting mode", required = false)
+-    public GATKRunReport.PhoneHomeOption phoneHomeType = GATKRunReport.PhoneHomeOption.AWS;
 +    public GATKRunReport.PhoneHomeOption phoneHomeType = GATKRunReport.PhoneHomeOption.NO_ET;
- 
-     @Argument(fullName = "gatk_key", shortName = "K", doc="GATK Key file. Required if running with -et NO_ET. Please see " + UserException.PHONE_HOME_DOCS_URL + " for details.", required = false)
+     /**
+      * Please see the "phone_home" argument below and the online documentation FAQs for more details on the key system
+      * and how to request a key.
+      */
+     @Argument(fullName = "gatk_key", shortName = "K", doc="GATK key file required to run with -et NO_ET", required = false)
      public File gatkKeyFile = null;
 -- 
